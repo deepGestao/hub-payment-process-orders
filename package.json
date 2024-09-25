@@ -1,0 +1,49 @@
+{
+  "name": "hub-payment-process-orders",
+  "version": "1.0.0",
+  "description": "Micro-serviço que registra cartões no gateway de pagamento",
+  "main": "index.js",
+  "scripts": {
+    "change_lambda": "aws lambda update-function-code --function-name \"hub-payment-process-orders-dev\" --s3-bucket \"lambda-code-140023362908\" --s3-key \"dev/hub-payment-process-orders/dist.zip\"",
+    "move": "aws s3 cp \"./dist.zip\" \"s3://lambda-code-140023362908/dev/hub-payment-process-orders/dist.zip\"",
+    "deploy": "npm run move && npm run change_lambda",
+    "lint": "eslint . --fix --ext .js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "updates": "npx npm-check-updates --target minor -u && npm install",
+    "esbuild": "esbuild ./src/index.js --entry-names=[dir]/[name] --bundle --platform=node --target=node18.20 --outdir=dist --minify",
+    "dts": "dts-bundle-generator --out-file dist/index.d.js --no-banner src/index.js",
+    "build": "npm run lint && npm run esbuild && rm -r dist.zip && zip dist.zip -r dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepGestao/hub-payment-process-orders.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deepGestao/hub-payment-process-orders/issues"
+  },
+  "homepage": "https://github.com/deepGestao/hub-payment-process-orders#readme",
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "axios": "^1.7.7",
+    "uuid4": "^2.0.3"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1233.0",
+    "dotenv": "^16.0.3",
+    "dts-bundle-generator": "^6.13.0",
+    "esbuild": "^0.23.1",
+    "eslint": "^8.25.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-code-complexity": "^1.1.1",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.9.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-security": "^1.5.0",
+    "prettier": "^2.7.1"
+  }
+}
