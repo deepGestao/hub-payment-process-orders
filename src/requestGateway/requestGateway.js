@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getAccessToken } from '../getAccessToken/getAccessToken';
+import { sendEventBridge } from '../sendEventBridge/sendEventBridge';
 
 const getHeaders = (token, content) => ({
   'Content-Type': 'application/json',
@@ -64,7 +65,8 @@ const requestGateway = async (content) => {
     .then((response) => {
       result.id = response.data.id;
     })
-    .catch((e) => {
+    .catch(async (e) => {
+      await sendEventBridge(content);
       console.error(e);
     });
   return result.id;
