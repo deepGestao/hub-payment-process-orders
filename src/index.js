@@ -5,8 +5,8 @@ import { sendDynamoDbRequest } from './sendDynamoDbRequest/sendDynamoDbRequest';
 
 const processItems = async (content) => {
   const result = await Promise.allSettled(content.map(async (item) => {
-    const gatewayId = await requestGateway(item);
     const { attempts } = await requestDynamoDbOrders(item.when.split('|')[0]);
+    const gatewayId = await requestGateway(item, attempts + 1);
     await sendDynamoDbRequestStatus(item, attempts + 1, gatewayId);
     await sendDynamoDbRequest(item, !!(gatewayId));
   }));

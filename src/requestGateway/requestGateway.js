@@ -4,7 +4,12 @@ import { sendEventBridge } from '../sendEventBridge/sendEventBridge';
 
 const getHeaders = (token, content) => ({
   'Content-Type': 'application/json',
-  'X-Idempotency-Key': `${content.when.split('|')[0]}|${new Date().setHours(0, 0, 0, 0)}`,
+  'X-Idempotency-Key': `${content.when.split('|')[0]}|${new Date().setHours(
+    0,
+    0,
+    0,
+    0,
+  )}`,
   Authorization: `Bearer ${token}`,
 });
 
@@ -54,19 +59,22 @@ const getRequestBody = (content) => ({
   transaction_amount: parseFloat(content.amount),
 });
 
-const requestGateway = async (content) => {
+const requestGateway = async (content, attempts) => {
   const token = await getAccessToken();
   const result = { id: '' };
-  await axios.post(
-    process.env.MERCADO_PAGO_PAYMENT,
-    getRequestBody(content),
-    getConfig(token, content),
-  )
+  await axios
+    .post(
+      process.env.MERCADO_PAGO_PAYMENT,
+      getRequestBody(content),
+      getConfig(token, content),
+    )
     .then((response) => {
       result.id = response.data.id;
     })
     .catch(async (e) => {
-      await sendEventBridge(content);
+      if (attempts < 5) {
+        await sendEventBridge(content);
+      }
       console.error(e);
     });
   return result.id;
