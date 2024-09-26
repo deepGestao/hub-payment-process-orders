@@ -20,6 +20,7 @@ const getDetails = (content) => ({
   paymentMethod: content.paymentMethod,
   date: getTomorrow().toISOString(),
   token: content.when.split('|')[0],
+  expiresAt: content.expiresAt,
 });
 
 const sendEventBridge = async (content) => {
