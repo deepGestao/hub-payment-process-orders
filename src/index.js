@@ -26,7 +26,7 @@ const handler = async (event, context) => {
   } catch (e) {
     console.error(e);
     return {
-      statusCode: 400,
+      statusCode: 500,
       body: JSON.stringify({ message: 'internal server error' }),
     };
   }
