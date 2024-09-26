@@ -10,6 +10,7 @@ const getStatus = (attempts, gatewayId) => {
 };
 
 const sendDynamoDbRequestStatus = async (content, attempts, gatewayId) => {
+  const status = getStatus(attempts, gatewayId);
   try {
     await dynamodb
       .updateItem({
@@ -30,7 +31,7 @@ const sendDynamoDbRequestStatus = async (content, attempts, gatewayId) => {
         },
         ExpressionAttributeValues: {
           ':attempts': { S: `${attempts}` },
-          ':status': { S: getStatus(attempts, gatewayId) },
+          ':status': { S: status },
           ':processed': { S: 'processed' },
           ':updatedAt': { S: new Date().toISOString() },
           ':gatewayId': { S: gatewayId ? `mercadopago|${gatewayId}` : '' },
